@@ -27,6 +27,7 @@ jobs:
           pip install behave
           pip install allure-behave
           pip install selenium
+          pip install faker  # Adicionando a dependência do Faker
 
       - name: Rodar os testes com Behave
         run: |
@@ -44,4 +45,5 @@ jobs:
           git add allure-report
           git commit -m "Adicionar relatórios do Allure"
           git push origin main
+
 
