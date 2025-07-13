@@ -1,0 +1,1 @@
+{"total":2,"items":[{"uid":"c81d9c03ea2aca24c6190094ba79ac97","name":"Validações na tela de login","statistic":{"failed":0,"broken":0,"skipped":0,"passed":5,"unknown":0,"total":5}},{"uid":"b9261f7a2aac4ffb29089b76dc845fd1","name":"Cadastro de usuário","statistic":{"failed":0,"broken":0,"skipped":0,"passed":1,"unknown":0,"total":1}}]}

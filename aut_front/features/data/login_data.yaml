@@ -1,0 +1,25 @@
+{
+  "dados_invalidos": [
+    {
+      "email": "",
+      "senha": "",
+      "mensagens": ["Email é obrigatório", "Password é obrigatório"]
+    },
+    {
+      "email": "silvio.tadeu@gmail.com",
+      "senha": "",
+      "mensagens": ["Password é obrigatório"]
+    },
+    {
+      "email": "",
+      "senha": "123456",
+      "mensagens": ["Email não pode ficar em branco"]
+    }
+  ],
+  "dados_validos": [
+    {
+      "email": "usuario@teste.com",
+      "senha": "senha123"
+    }
+  ]
+}
