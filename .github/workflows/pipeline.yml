@@ -30,6 +30,7 @@ jobs:
 
       - name: Rodar os testes com Behave
         run: |
+          cd aut_front  # Navega para o diretório correto
           behave  # Comando para rodar os testes com Behave
 
       - name: Gerar relatório do Allure
@@ -43,3 +44,4 @@ jobs:
           git add allure-report
           git commit -m "Adicionar relatórios do Allure"
           git push origin main
+
