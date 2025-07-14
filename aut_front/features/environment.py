@@ -1,11 +1,8 @@
 import os
-# import allure  # Comentei a linha de importação do allure
 import logging
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from behave.model import Status
-from utils.screenshot import salvar_print
 
 def before_all(context):
     """Configuração limpa e funcional"""
@@ -36,23 +33,9 @@ def before_all(context):
     )
 
 
-def after_step(context, step):
-    """Screenshots (mantido original)"""
-    if hasattr(context, "driver"):
-        nome = f"{step.keyword}_{step.name[:50].replace(' ', '_')}"
-        caminho = salvar_print(context.driver, nome)
-        if os.path.exists(caminho):
-            with open(caminho, "rb") as image_file:
-                # Código comentado (antes usava allure)
-                # allure.attach(
-                #     image_file.read(),
-                #     name=f"{step.keyword}: {step.name}",
-                #     attachment_type=allure.attachment_type.PNG
-                # )
-
-
 def after_all(context):
     """Encerramento"""
     if hasattr(context, "driver"):
         context.driver.quit()
+
 
