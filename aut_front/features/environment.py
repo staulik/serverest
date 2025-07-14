@@ -1,5 +1,5 @@
 import os
-#import allure
+# import allure  # Comentei a linha de importação do allure
 import logging
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -43,11 +43,12 @@ def after_step(context, step):
         caminho = salvar_print(context.driver, nome)
         if os.path.exists(caminho):
             with open(caminho, "rb") as image_file:
-                allure.attach(
-                    image_file.read(),
-                    name=f"{step.keyword}: {step.name}",
-                    attachment_type=allure.attachment_type.PNG
-                )
+                # Comentado o código que usa o allure
+                # allure.attach(
+                #     image_file.read(),
+                #     name=f"{step.keyword}: {step.name}",
+                #     attachment_type=allure.attachment_type.PNG
+                # )
 
 
 def after_all(context):
