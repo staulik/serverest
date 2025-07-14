@@ -43,7 +43,7 @@ def after_step(context, step):
         caminho = salvar_print(context.driver, nome)
         if os.path.exists(caminho):
             with open(caminho, "rb") as image_file:
-                # Comentado o código que usa o allure
+                # Código comentado (antes usava allure)
                 # allure.attach(
                 #     image_file.read(),
                 #     name=f"{step.keyword}: {step.name}",
@@ -55,3 +55,4 @@ def after_all(context):
     """Encerramento"""
     if hasattr(context, "driver"):
         context.driver.quit()
+
