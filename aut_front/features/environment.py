@@ -1,5 +1,5 @@
 import os
-import allure
+#import allure
 import logging
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
