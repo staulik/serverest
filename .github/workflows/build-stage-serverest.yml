@@ -1,0 +1,21 @@
+name: Build Stage Serverest
+
+on:
+  push:
+    branches:
+      - stage-serverest
+
+jobs:
+  trigger_stage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Simular deploy no Stage
+        run: |
+          echo "🔧 Simulando deploy no ambiente stage"
+
+      - name: Fake commit versão e push
+        run: |
+          echo "🔖 Versão 1.0.1-stage"
