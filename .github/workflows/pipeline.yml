@@ -1,4 +1,4 @@
-name: Automation Python>>>Behave>>>Pyest
+name: Automation - Python>>>Behave>>>Pyest
 
 on:
   workflow_call:
