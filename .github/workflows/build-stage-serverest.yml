@@ -1,4 +1,4 @@
-name: Build Stage Serverest
+name: Build Stage Serverest test
 
 on:
   push:
