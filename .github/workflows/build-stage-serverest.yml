@@ -5,6 +5,10 @@ on:
     branches:
       - stage-serverest
 
+permissions:
+  contents: read  # leitura é suficiente aqui
+  id-token: write  # necessário para chamadas entre workflows
+
 jobs:
   trigger_stage:
     runs-on: ubuntu-latest
@@ -13,9 +17,9 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Simular deploy no Stage
-        run: |
-          echo "🔧 Simulando deploy no ambiente stage"
+        run: echo "🔧 Simulando deploy no ambiente stage"
 
-      - name: Fake commit versão e push
-        run: |
-          echo "🔖 Versão 1.0.1-stage"
+  chamar_pipeline_testes:
+    uses: saulik/serverest/.github/workflows/test-pipeline.yml@main
+    needs: trigger_stage
+
