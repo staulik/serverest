@@ -6,8 +6,8 @@ on:
       - stage-serverest
 
 permissions:
-  contents: read  # leitura é suficiente aqui
-  id-token: write  # necessário para chamadas entre workflows
+  contents: read
+  actions: write  # isso permite usar o repository_dispatch
 
 jobs:
   trigger_stage:
@@ -19,7 +19,15 @@ jobs:
       - name: Simular deploy no Stage
         run: echo "🔧 Simulando deploy no ambiente stage"
 
-  chamar_pipeline_testes:
-    uses: saulik/serverest/.github/workflows/test-pipeline.yml@main
+  chamar_testes:
     needs: trigger_stage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Disparar pipeline de testes da main
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: saulik/serverest
+          event-type: trigger-from-stage
+
 
