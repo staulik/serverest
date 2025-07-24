@@ -1,15 +1,14 @@
 name: Automation Python>>>Behave>>>Pyest
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Build Stage Serverest"]
+    types:
+      - completed
 
 jobs:
   test:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -31,12 +30,13 @@ jobs:
 
       - name: Rodar os testes com Behave
         run: |
-          cd aut_front  # Navega para o diretório correto
-          behave  # Comando para rodar os testes com Behave
+          cd aut_front
+          behave
 
       - name: Exibir resultados no console
         run: |
           echo "Testes executados com sucesso!"
+
 
 
 
