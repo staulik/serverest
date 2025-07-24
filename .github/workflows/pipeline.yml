@@ -4,9 +4,7 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+  workflow_call:
 
 jobs:
   test:
@@ -31,12 +29,12 @@ jobs:
 
       - name: Rodar os testes com Behave
         run: |
-          cd aut_front  # Navega para o diretório correto
-          behave  # Comando para rodar os testes com Behave
+          cd aut_front
+          behave
 
       - name: Exibir resultados no console
-        run: |
-          echo "Testes executados com sucesso!"
+        run: echo "Testes executados com sucesso!"
+
 
 
 
