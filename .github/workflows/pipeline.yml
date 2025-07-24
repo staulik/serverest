@@ -1,10 +1,11 @@
-name: Automation Python>>>Behave>>>Pyest
+name: Automation Python>>>Behave>>>Pytest
 
 on:
   workflow_run:
-    workflows: ["Build Stage Serverest"]
-    types:
-      - completed
+    workflows: ["Build Stage Serverest"]  # o nome EXATO do workflow que dispara
+    types: [completed]                     # quando terminar
+    branches:                              # opcional, mas recomendado:
+      - stage-serverest                    # filtra builds que rolam nessa branch
 
 jobs:
   test:
@@ -12,28 +13,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout do código
-        uses: actions/checkout@v2
-
-      - name: Configurar Python
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v2
         with:
-          python-version: '3.x'
+          repository: ${{ github.event.workflow_run.head_repository.full_name }}
+          ref: ${{ github.event.workflow_run.head_branch }}
+          fetch-depth: 0
 
       - name: Instalar dependências
-        run: |
-          python -m pip install --upgrade pip
-          pip install behave
-          pip install selenium
-          pip install faker
-          pip install webdriver-manager
+        run: pip install behave pytest
 
-      - name: Rodar os testes com Behave
+      - name: Rodar testes
         run: |
           cd aut_front
           behave
 
-      - name: Exibir resultados no console
+      - name: Testes concluídos
+        run: echo "🟢 Testes finalizados com sucesso"
+
         run: |
           echo "Testes executados com sucesso!"
 
