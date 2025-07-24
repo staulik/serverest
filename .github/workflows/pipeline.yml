@@ -1,7 +1,8 @@
 name: Automation - Python>>>Behave>>>Pyest
 
 on:
-  workflow_call:
+  repository_dispatch:
+    types: [trigger-from-stage]
 
 jobs:
   test:
@@ -30,7 +31,8 @@ jobs:
           behave
 
       - name: Exibir resultados no console
-        run: echo "Testes executados com sucesso!"
+        run: echo "🎉 Testes executados com sucesso! Tudo certo, chefe! ✅"
+
 
 
 
