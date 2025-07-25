@@ -26,8 +26,9 @@ jobs:
       - name: Disparar pipeline de testes da main
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PERSONAL_TOKEN }}
           repository: saulik/serverest
           event-type: trigger-from-stage
+
 
 
