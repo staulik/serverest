@@ -7,28 +7,29 @@ on:
 
 permissions:
   contents: write
-  actions: write  # isso permite usar o repository_dispatch
+  actions: write  # Permite o uso do repository_dispatch
 
 jobs:
-  trigger_stage:
+  deployDev:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout do código
         uses: actions/checkout@v2
 
-      - name: Simular deploy no Stage
+      - name: Simular deploy no ambiente de Stage
         run: echo "🔧 Simulando deploy no ambiente stage"
 
-  chamar_testes:
-    needs: trigger_stage
+  RegressionTest:
+    needs: deployDev
     runs-on: ubuntu-latest
     steps:
-      - name: Disparar pipeline de testes da main
+      - name: Disparar pipeline de testes de regressão
         uses: peter-evans/repository-dispatch@v2
         with:
           token: ${{ secrets.PERSONAL_TOKEN }}
           repository: staulik/serverest
           event-type: trigger-from-stage
+
 
 
 
