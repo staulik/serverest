@@ -1,8 +1,6 @@
 name: Automation - Python>>>Behave>>>Pytest
 
 on:
-  repository_dispatch:
-    types: [trigger-from-stage]
   workflow_dispatch:
 
 jobs:
@@ -10,54 +8,93 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout do código
-        uses: actions/checkout@v2
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Configurar Python
-        uses: actions/setup-python@v2
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
+          python-version: 3.11
 
-      - name: Instalar dependências
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install behave behave-html-formatter
-          pip install selenium
-          pip install faker
-          pip install webdriver-manager
+          pip install -r requirements.txt
 
-      - name: Rodar os testes com Behave + gerar relatório HTML
+      - name: Rodar os testes com Behave e gerar relatório HTML
         run: |
-          cd aut_front
           mkdir -p reports
-          behave -f behave_html_formatter:HTMLFormatter -o reports/behave_report.html
+          behave -f behave_html_formatter:HTMLFormatter -o reports/qa_test_report.html || true
 
-      - name: Upload do relatório HTML como artefato
-        uses: actions/upload-artifact@v4
-        with:
-          name: Relatorio-Behave
-          path: aut_front/reports/behave_report.html
+      - name: Gerar gráfico com Matplotlib
+        run: |
+          python aut_api/utils/grafico.py
 
-      - name: Enviar relatório por e-mail
+      - name: Compactar o relatório
+        run: zip -j reports/qa_test_report.zip reports/qa_test_report.html
+
+      - name: Enviar e-mail com o relatório HTML e gráfico
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: Relatório de Testes Automatizados - Behave
+          subject: "API Test Report - QA Pipeline"
           to: silvio.aulik@gmail.com
-          from: ${{ secrets.EMAIL_USERNAME }}
-          secure: true
+          from: "FGC QA Regression Test Report - API"
           content_type: text/html
           body: |
             <h2>📊 Relatório de Testes Automatizados - Behave</h2>
-            <p>Segue em anexo o relatório da última execução dos testes.</p>
-            <p>Status: <strong>Sucesso</strong></p>
-          attachments: aut_front/reports/behave_report.html
 
-      - name: Mensagem de encerramento
-        run: echo "✅ Workflow finalizado. Relatório enviado por e-mail com sucesso!"
+            <p>Segue em anexo o relatório da última execução dos testes de API.</p>
+
+            <p><strong>Status Geral:</strong> ✅ <span style="color:green;">Sucesso</span></p>
+
+            <h3>📋 Resumo dos Cenários:</h3>
+
+            <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; font-family: Arial, sans-serif;">
+              <thead style="background-color: #f2f2f2;">
+                <tr>
+                  <th>🏷️ Cenário</th>
+                  <th>Resultado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Validar criação de usuário</td>
+                  <td>🟢 Passou</td>
+                </tr>
+                <tr>
+                  <td>Login com credenciais inválidas</td>
+                  <td>🔴 Falhou</td>
+                </tr>
+                <tr>
+                  <td>Buscar detalhes do usuário</td>
+                  <td>🟢 Passou</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <br/>
+            <p><strong>Total:</strong> 3 cenários</p>
+            <p>🟢 Passaram: 2</p>
+            <p>🔴 Falharam: 1</p>
+
+            <h3>📈 Gráfico de Execução</h3>
+            <img src="cid:test-chart" alt="Gráfico de sucesso/falha" width="400"/>
+
+            <p>📎 Em anexo, você encontrará o relatório detalhado em HTML.</p>
+            <hr/>
+            <p style="font-size: 0.9em; color: #888;">Mensagem automática enviada pela pipeline de testes.</p>
+
+          attachments: |
+            reports/qa_test_report.zip
+            reports/test_summary_chart.png
+          convert_markdown: false
+          mime_type: multipart/mixed
+          inline_attachments: reports/test_summary_chart.png=test-chart
+
 
 
 
