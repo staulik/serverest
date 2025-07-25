@@ -27,7 +27,7 @@ jobs:
         uses: peter-evans/repository-dispatch@v2
         with:
           token: ${{ secrets.PERSONAL_TOKEN }}
-          repository: saulik/serverest
+          repository: staulik/serverest
           event-type: trigger-from-stage
 
 
