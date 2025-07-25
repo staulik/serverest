@@ -38,8 +38,27 @@ jobs:
           name: Relatorio-Behave
           path: aut_front/reports/behave_report.html
 
-      - name: Exibir mensagem de sucesso
-        run: echo "🎉 Testes executados e relatório gerado com sucesso, chefe! ✅"
+      - name: Enviar relatório por e-mail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: Relatório de Testes Automatizados - Behave
+          to: silvio.aulik@gmail.com
+          from: ${{ secrets.EMAIL_USERNAME }}
+          secure: true
+          content_type: text/html
+          body: |
+            <h2>📊 Relatório de Testes Automatizados - Behave</h2>
+            <p>Segue em anexo o relatório da última execução dos testes.</p>
+            <p>Status: <strong>Sucesso</strong></p>
+          attachments: aut_front/reports/behave_report.html
+
+      - name: Mensagem de encerramento
+        run: echo "✅ Workflow finalizado. Relatório enviado por e-mail com sucesso!"
+
 
 
 
