@@ -1,4 +1,4 @@
-name: Automation - Python>>>Behave>>>Allure
+name: Automation - Python>>>Behave>>>Pytest
 
 on:
   repository_dispatch:
@@ -23,31 +23,41 @@ jobs:
           python -m pip install --upgrade pip
           pip install behave allure-behave selenium faker webdriver-manager
 
-      - name: Rodar testes com Behave e gerar evidências Allure
+      - name: Rodar testes com Behave e gerar resultados para o Allure
         run: |
           cd aut_front
           mkdir -p allure-results
-          behave -f allure_behave.formatter:AllureFormatter -o allure-results || echo "tests_failed=true" >> $GITHUB_ENV
+          behave -f allure_behave.formatter:AllureFormatter -o allure-results -f pretty || echo "tests_failed=true" >> $GITHUB_ENV
 
       - name: Gerar relatório Allure
         run: |
-          wget https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
-          tar -xvzf allure-2.27.0.tgz
-          ./allure-2.27.0/bin/allure generate aut_front/allure-results -o aut_front/allure-report --clean
+          cd aut_front
+          mkdir -p allure-report
+          allure generate allure-results -o allure-report --clean
 
-      - name: Compactar o relatório
+      - name: Compactar relatório Allure
         run: |
-          zip -r aut_front/allure-report.zip aut_front/allure-report
+          cd aut_front
+          tar -czf allure-report.tar.gz allure-report
 
-      - name: Criar corpo do e-mail dinamicamente
+      - name: Criar corpo do e-mail com instruções
         run: |
-          if [[ "${{ env.tests_failed }}" == "true" ]]; then
-            echo "📊 Relatório de Testes Automatizados - Allure  \nHouveram ❌ FALHAS ❌ nos testes automatizados.\nConfira os detalhes no relatório em anexo." > email_body.txt
+          echo "📊 Relatório de Testes Automatizados - Allure" > email_body.txt
+          if [[ \"${{ env.tests_failed }}\" == \"true\" ]]; then
+            echo "Houveram ❌ FALHAS ❌ nos testes automatizados." >> email_body.txt
           else
-            echo "📊 Relatório de Testes Automatizados - Allure  \nTodos os testes passaram com sucesso! ✅\nRelatório em anexo." > email_body.txt
+            echo "Todos os testes passaram com sucesso! ✅" >> email_body.txt
           fi
+          echo "" >> email_body.txt
+          echo "🔎 Para visualizar o relatório com evidências:" >> email_body.txt
+          echo "1. Descompacte o arquivo 'allure-report.tar.gz'" >> email_body.txt
+          echo "2. Rode o comando abaixo no terminal (dentro da pasta):" >> email_body.txt
+          echo "" >> email_body.txt
+          echo "   python -m http.server 8080" >> email_body.txt
+          echo "" >> email_body.txt
+          echo "3. Acesse http://localhost:8080 no navegador" >> email_body.txt
 
-      - name: Enviar relatório por e-mail
+      - name: Enviar e-mail com relatório Allure
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -61,10 +71,11 @@ jobs:
           secure: true
           content_type: text/plain
           body: file://email_body.txt
-          attachments: aut_front/allure-report.zip
+          attachments: aut_front/allure-report.tar.gz
 
       - name: Finalização
-        run: echo "✅ Workflow encerrado. E-mail enviado com Allure report!"
+        run: echo "✅ Workflow concluído com envio do relatório Allure por e-mail."
+
 
 
 
