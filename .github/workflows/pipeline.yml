@@ -26,7 +26,7 @@ jobs:
           pip install faker
           pip install webdriver-manager
 
-      - name: Rodar os testes com Behave + gerar relatório HTML
+      - name: Rodar os testes com Behave e gerar relatório HTML
         run: |
           cd aut_front
           mkdir -p reports
