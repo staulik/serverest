@@ -2,7 +2,7 @@ name: Automation - Python>>>Behave>>>Pytest
 
 on:
   repository_dispatch:
-    types: [trigger-from-stage]
+    types: [deploy-regressiontest]
   workflow_dispatch:
 
 jobs:
