@@ -19,7 +19,7 @@ jobs:
       - name: Instalar dependências
         run: |
           python -m pip install --upgrade pip
-          pip install -r aut_api/requirements.txt
+          pip install behave
 
       - name: Rodar os testes com Behave e gerar relatório HTML
         run: |
@@ -46,7 +46,9 @@ jobs:
             <ul>
               <li>📄 <strong>Relatório HTML</strong></li>
             </ul>
+            <p style="margin-top: 20px;">💪 Pipeline executada com sucesso!</p>
           attachments: reports/BBVA_qa_test_report.html
+
 
 
 
