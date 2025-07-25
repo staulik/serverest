@@ -6,7 +6,7 @@ on:
       - stage-serverest
 
 permissions:
-  contents: read
+  contents: write
   actions: write  # isso permite usar o repository_dispatch
 
 jobs:
