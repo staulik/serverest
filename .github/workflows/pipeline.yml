@@ -33,7 +33,7 @@ jobs:
           behave -f html -o reports/behave_report.html
 
       - name: Upload do relatório HTML como artefato
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Relatorio-Behave
           path: aut_front/reports/behave_report.html
