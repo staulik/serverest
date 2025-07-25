@@ -1,6 +1,8 @@
-name: Automation - Python>>>Behave>>>Pytest
+name: Automation - Python>>>Behave>>>Pytest 
 
 on:
+  repository_dispatch:
+    types: [trigger-from-stage]
   workflow_dispatch:
 
 jobs:
@@ -8,50 +10,57 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - name: Checkout do código
+        uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Configurar Python
+        uses: actions/setup-python@v2
         with:
-          python-version: 3.11
+          python-version: '3.x'
 
       - name: Instalar dependências
         run: |
           python -m pip install --upgrade pip
           pip install behave behave-html-formatter
+          pip install selenium
+          pip install faker
+          pip install webdriver-manager
 
-      - name: Rodar os testes com Behave e gerar relatório HTML
+      - name: Rodar os testes com Behave + gerar relatório HTML
         run: |
+          cd aut_front
           mkdir -p reports
-          behave -f behave_html_formatter:HTMLFormatter -o reports/BBVA_qa_test_report.html aut_api/features
+          behave -f behave_html_formatter:HTMLFormatter -o reports/behave_report.html
 
-      - name: Compactar relatório HTML
-        run: zip -j reports/BBVA_qa_test_report.zip reports/BBVA_qa_test_report.html
+      - name: Upload do relatório HTML como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: Relatorio-Behave
+          path: aut_front/reports/behave_report.html
 
-      - name: Enviar e-mail com relatório
+      - name: Enviar relatório por e-mail
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "BBVA Regression Test Exchange Matera ✅"
+          subject: BBVA Relatório de Testes Automatizados
           to: silvio.aulik@gmail.com
           cc: staulik10@gmail.com, qatadeu@gmail.com
-          from: BBVA Regression Test Report
-          content_type: html
+          from: ${{ secrets.EMAIL_USERNAME }}
+          secure: true
+          content_type: text/html
           body: |
-            <h2>📊 Relatório de Testes Automatizados</h2>
-            <p>Segue em anexo o relatório da última execução dos testes.</p>
-            <p>Status: <strong>Sucesso</strong></p>
-            <p>Anexos incluídos:</p>
-            <ul>
-              <li>📄 <strong>Relatório HTML</strong></li>
-              <li>📦 <strong>Relatório ZIP</strong></li>
-            </ul>
-            <p style="margin-top: 20px;">💪 Pipeline executada com sucesso!</p>
-          attachments: reports/BBVA_qa_test_report.zip, reports/BBVA_qa_test_report.html
+            📊 Relatório de Testes Automatizados - BBVA  
+            Segue em anexo o relatório da última execução dos testes.  
+            Status: **Sucesso**
+          attachments: aut_front/reports/behave_report.html
+
+      - name: Mensagem de encerramento
+        run: echo "✅ Workflow finalizado. Relatório enviado por e-mail com sucesso!"
+
+
 
 
 
