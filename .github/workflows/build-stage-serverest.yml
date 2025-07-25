@@ -1,4 +1,4 @@
-name: BBVA - Build Stages Serverest
+name: BBVA - Build Stage Serverest
 
 on:
   push:
