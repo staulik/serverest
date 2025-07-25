@@ -3,6 +3,7 @@ name: Automation - Python>>>Behave>>>Pytest
 on:
   repository_dispatch:
     types: [trigger-from-stage]
+  workflow_dispatch:  # ← Gatilho manual incluído
 
 jobs:
   test:
@@ -38,7 +39,7 @@ jobs:
           path: aut_front/reports/behave_report.html
 
       - name: Exibir mensagem de sucesso
-        run: echo "🎉 Testes executados e relatório gerado com sucesso, chefe! ✅"
+        run: echo "🎉 Testes executados e relatório gerado com sucesso! ✅"
 
 
 
