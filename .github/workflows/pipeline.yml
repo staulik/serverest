@@ -24,7 +24,10 @@ jobs:
       - name: Rodar os testes com Behave e gerar relatório HTML
         run: |
           mkdir -p reports
-          behave -f html -o reports/BBVA_qa_test_report.html aut_api/features
+          behave -f behave_html_formatter:HTMLFormatter -o reports/BBVA_qa_test_report.html aut_api/features
+
+      - name: Compactar relatório HTML
+        run: zip -j reports/BBVA_qa_test_report.zip reports/BBVA_qa_test_report.html
 
       - name: Enviar e-mail com relatório
         uses: dawidd6/action-send-mail@v3
@@ -42,12 +45,14 @@ jobs:
             <h2>📊 Relatório de Testes Automatizados</h2>
             <p>Segue em anexo o relatório da última execução dos testes.</p>
             <p>Status: <strong>Sucesso</strong></p>
-            <p>Anexo incluído:</p>
+            <p>Anexos incluídos:</p>
             <ul>
               <li>📄 <strong>Relatório HTML</strong></li>
+              <li>📦 <strong>Relatório ZIP</strong></li>
             </ul>
             <p style="margin-top: 20px;">💪 Pipeline executada com sucesso!</p>
-          attachments: reports/BBVA_qa_test_report.html
+          attachments: reports/BBVA_qa_test_report.zip, reports/BBVA_qa_test_report.html
+
 
 
 
