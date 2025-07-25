@@ -1,6 +1,8 @@
 name: Automation - Python>>>Behave>>>Pytest
 
 on:
+  repository_dispatch:
+    types: [trigger-from-stage]
   workflow_dispatch:
 
 jobs:
