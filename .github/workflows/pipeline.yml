@@ -1,4 +1,4 @@
-name: Automation - Python>>>Behave>>>Pytest
+name: Automation - Python>>>Behave>>>Pytests
 
 on:
   repository_dispatch:
