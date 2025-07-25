@@ -1,4 +1,4 @@
-name: Automation - Python>>>Behave>>>Pyest
+name: Automation - Python>>>Behave>>>Pytest
 
 on:
   repository_dispatch:
@@ -25,13 +25,21 @@ jobs:
           pip install faker
           pip install webdriver-manager
 
-      - name: Rodar os testes com Behave
+      - name: Rodar os testes com Behave + gerar relatório HTML
         run: |
           cd aut_front
-          behave
+          mkdir -p reports
+          behave -f html -o reports/behave_report.html
 
-      - name: Exibir resultados no console
-        run: echo "🎉 Testes executados com sucesso! Tudo certo, chefe! ✅"
+      - name: Upload do relatório HTML como artefato
+        uses: actions/upload-artifact@v3
+        with:
+          name: Relatorio-Behave
+          path: aut_front/reports/behave_report.html
+
+      - name: Exibir mensagem de sucesso
+        run: echo "🎉 Testes executados e relatório gerado com sucesso, chefe! ✅"
+
 
 
 
