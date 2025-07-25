@@ -28,7 +28,8 @@ jobs:
         with:
           token: ${{ secrets.PERSONAL_TOKEN }}
           repository: staulik/serverest
-          event-type: trigger-from-stage
+          event-type: deploy-regressiontest
+
 
 
 
