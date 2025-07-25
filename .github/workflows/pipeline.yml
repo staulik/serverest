@@ -1,4 +1,4 @@
-name: Automation - Python>>>Behave>>>Pytest
+name: Automation - Python>>>Behave>>>Allure
 
 on:
   repository_dispatch:
@@ -21,21 +21,30 @@ jobs:
       - name: Instalar dependências
         run: |
           python -m pip install --upgrade pip
-          pip install behave behave-html-formatter selenium faker webdriver-manager
+          pip install behave allure-behave selenium faker webdriver-manager
 
-      - name: Rodar testes com Behave + gerar relatório
-        id: run_tests
+      - name: Rodar testes com Behave e gerar evidências Allure
         run: |
           cd aut_front
-          mkdir -p reports
-          behave -f behave_html_formatter:HTMLFormatter -o reports/behave_report.html || echo "tests_failed=true" >> $GITHUB_ENV
+          mkdir -p allure-results
+          behave -f allure_behave.formatter:AllureFormatter -o allure-results || echo "tests_failed=true" >> $GITHUB_ENV
+
+      - name: Gerar relatório Allure
+        run: |
+          wget https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
+          tar -xvzf allure-2.27.0.tgz
+          ./allure-2.27.0/bin/allure generate aut_front/allure-results -o aut_front/allure-report --clean
+
+      - name: Compactar o relatório
+        run: |
+          zip -r aut_front/allure-report.zip aut_front/allure-report
 
       - name: Criar corpo do e-mail dinamicamente
         run: |
           if [[ "${{ env.tests_failed }}" == "true" ]]; then
-            echo "📊 Relatório de Testes Automatizados - Behave  \nHouveram ❌ FALHAS ❌ nos testes automatizados.\nConfira os detalhes no relatório em anexo." > email_body.txt
+            echo "📊 Relatório de Testes Automatizados - Allure  \nHouveram ❌ FALHAS ❌ nos testes automatizados.\nConfira os detalhes no relatório em anexo." > email_body.txt
           else
-            echo "📊 Relatório de Testes Automatizados - Behave  \nTodos os testes passaram com sucesso! ✅\nRelatório em anexo." > email_body.txt
+            echo "📊 Relatório de Testes Automatizados - Allure  \nTodos os testes passaram com sucesso! ✅\nRelatório em anexo." > email_body.txt
           fi
 
       - name: Enviar relatório por e-mail
@@ -45,17 +54,17 @@ jobs:
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: Relatório de Testes Automatizados - Behave
+          subject: Relatório de Testes Automatizados - Allure
           to: silvio.aulik@gmail.com
           cc: staulik10@gmail.com, qatadeu@gmail.com
           from: ${{ secrets.EMAIL_USERNAME }}
           secure: true
           content_type: text/plain
           body: file://email_body.txt
-          attachments: aut_front/reports/behave_report.html
+          attachments: aut_front/allure-report.zip
 
       - name: Finalização
-        run: echo "✅ Workflow encerrado. E-mail enviado com base no status da execução!"
+        run: echo "✅ Workflow encerrado. E-mail enviado com Allure report!"
 
 
 
