@@ -1,4 +1,4 @@
-name: BBVA - Build Stage Serverests
+name: BBVA - Build Stage Serverest
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
         with:
           token: ${{ secrets.PERSONAL_TOKEN }}
           repository: staulik/serverest
-          event-type: deploy-regressiontest
+          event-type: devDeploy_qaRegressionTest
 
 
 
