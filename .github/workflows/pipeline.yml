@@ -43,23 +43,20 @@ jobs:
           cd aut_front
           allure generate allure-results -o allure-report --clean
 
-      - name: Compactar relatório em .safe
+      - name: Compactar relatório em .safe com senha
         run: |
           cd aut_front
-          zip -r allure-report.zip allure-report
+          zip -r -P allure123 allure-report.zip allure-report
           mv allure-report.zip allure-report.safe
 
       - name: Criar corpo do e-mail dinamicamente
         run: |
           if [[ "${{ env.tests_failed }}" == "true" ]]; then
-            echo "📊 Relatório de Testes Automatizados - Behave (Allure)" > email_body.txt
-            echo "❌ FALHAS detectadas nos testes." >> email_body.txt
+            echo -e "📊 Relatório de Testes Automatizados - Behave (Allure)\n❌ FALHAS detectadas nos testes." > email_body.txt
           else
-            echo "📊 Relatório de Testes Automatizados - Behave (Allure)" > email_body.txt
-            echo "✅ Todos os testes passaram com sucesso!" >> email_body.txt
+            echo -e "📊 Relatório de Testes Automatizados - Behave (Allure)\n✅ Todos os testes passaram com sucesso!" > email_body.txt
           fi
-          echo "" >> email_body.txt
-          echo "⚠️ Para visualizar o relatório, renomeie o arquivo 'allure-report.safe' para 'allure-report.zip' após o download." >> email_body.txt
+          echo -e "\n⚠️ Para visualizar o relatório, renomeie o arquivo 'allure-report.safe' para 'allure-report.zip'.\n🔐 Senha do zip: allure123" >> email_body.txt
 
       - name: Enviar relatório por e-mail
         uses: dawidd6/action-send-mail@v3
@@ -78,6 +75,7 @@ jobs:
 
       - name: Finalização
         run: echo "✅ Pipeline finalizada com envio do relatório Allure!"
+
 
 
 
