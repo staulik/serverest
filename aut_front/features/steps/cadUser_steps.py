@@ -3,6 +3,7 @@ from pages.login_page import LoginPage
 from pages.caduser_page import CadastroPage
 from faker import Faker
 from selenium.webdriver.support.ui import WebDriverWait
+from utils.screenshot import salvar_print  # <- Import da função de print
 
 fake = Faker()
 
@@ -14,6 +15,7 @@ def step_abrir_tela_login(context):
 @when("clico no botão para acessar o cadastro")
 def step_ir_para_tela_cadastro(context):
     context.login_page.clicar_botao_ir_cadastro()
+    salvar_print(context.driver, "clicou_ir_para_cadastro")
 
 @when("preencho as informações")
 def step_preencher_informacoes(context):
@@ -29,10 +31,12 @@ def step_preencher_informacoes(context):
 
     context.cadastro_page = CadastroPage(context.driver)
     context.cadastro_page.cad_user_adm(nome, email, senha)
+    salvar_print(context.driver, "preencheu_infos_cadastro")
 
 @then('devo ver a mensagem "Cadastro realizado com sucesso"')
 def step_verificar_mensagem_cadastro(context):
     mensagem = context.cadastro_page.verificar_mensagem_sucesso()
+    salvar_print(context.driver, "validou_msg_sucesso")
     assert mensagem is not None, "❌ Nenhuma mensagem de sucesso foi exibida"
     assert "Cadastro realizado com sucesso" in mensagem, f"❌ Mensagem inesperada: '{mensagem}'"
 
@@ -58,7 +62,8 @@ def step_redirecionado_para_area_logada(context):
 
     except Exception as e:
         raise AssertionError(f"❌ Não foi redirecionado corretamente: {str(e)}")
-
+    finally:
+        salvar_print(context.driver, "redirecionado_area_logada")
 
 @then("posso ver meu usuario logado")
 def step_validar_usuario_logado(context):
@@ -85,3 +90,5 @@ def step_validar_usuario_logado(context):
             f"❌ Nome do usuário logado não confere: esperado '{nome_esperado}', exibido '{nome_exibido}'"
     except Exception as e:
         raise AssertionError(f"❌ Erro ao validar o usuário logado: {str(e)}")
+    finally:
+        salvar_print(context.driver, "usuario_logado")
