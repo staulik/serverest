@@ -43,38 +43,55 @@ jobs:
           cd aut_front
           allure generate allure-results -o allure-report --clean
 
-      - name: Compactar relatório em .safe com senha
+      - name: Definir data e nome do relatório
+        id: vars
+        run: |
+          echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          echo "filename=Report_Teste_Automatizado_BBVA_$(date +'%Y-%m-%d').zip" >> $GITHUB_OUTPUT
+
+      - name: Compactar relatório com nome dinâmico
         run: |
           cd aut_front
-          zip -r -P allure123 allure-report.zip allure-report
-          mv allure-report.zip allure-report.safe
+          zip -r "${{ steps.vars.outputs.filename }}" allure-report
+
+      - name: Criar Release e enviar anexo
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v1.0.0-${{ steps.vars.outputs.date }}
+          name: "Relatório Allure - Depto de Testes e Homologação BBVA - ${{ steps.vars.outputs.date }}"
+          files: aut_front/${{ steps.vars.outputs.filename }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Criar corpo do e-mail dinamicamente
         run: |
+          echo "📊 Relatório de Testes Automatizados - Depto de Testes e Homologação BBVA" > email_body.txt
           if [[ "${{ env.tests_failed }}" == "true" ]]; then
-            echo -e "📊 Relatório de Testes Automatizados - Behave (Allure)\n❌ FALHAS detectadas nos testes." > email_body.txt
+            echo "❌ FALHAS detectadas nos testes." >> email_body.txt
           else
-            echo -e "📊 Relatório de Testes Automatizados - Behave (Allure)\n✅ Todos os testes passaram com sucesso!" > email_body.txt
+            echo "✅ Todos os testes passaram com sucesso!" >> email_body.txt
           fi
-          echo -e "\n⚠️ Para visualizar o relatório, renomeie o arquivo 'allure-report.safe' para 'allure-report.zip'.\n🔐 Senha do zip: allure123" >> email_body.txt
+          echo "" >> email_body.txt
+          echo "📈 Relatório disponível para download no link abaixo:" >> email_body.txt
+          echo "https://github.com/${{ github.repository }}/releases/download/v1.0.0-${{ steps.vars.outputs.date }}/${{ steps.vars.outputs.filename }}" >> email_body.txt
 
-      - name: Enviar relatório por e-mail
+      - name: Enviar relatório por e-mail (com link da Release)
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: Relatório de Testes Automatizados - Behave (Allure)
+          subject: Relatório de Testes Automatizados - BBVA (Allure)
           to: silvio.aulik@gmail.com
           cc: staulik10@gmail.com, qatadeu@gmail.com
           from: ${{ secrets.EMAIL_USERNAME }}
           secure: true
           body: file://email_body.txt
-          attachments: aut_front/allure-report.safe
 
       - name: Finalização
-        run: echo "✅ Pipeline finalizada com envio do relatório Allure!"
+        run: echo "✅ Pipeline finalizada com sucesso e relatório publicado no GitHub Releases!"
+
 
 
 
