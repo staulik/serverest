@@ -2,8 +2,10 @@ name: Automation - Python>>>Behave>>>Pytests
 
 on:
   repository_dispatch:
-    types: [deploy-regressiontest]
+    types: [devDeploy_qaRegressionTest]
   workflow_dispatch:
+  schedule:
+    - cron: '0 22 * * 5'  # 19h de Brasília = 22h UTC (3 horas a mais)
 
 jobs:
   test:
@@ -91,6 +93,7 @@ jobs:
 
       - name: Finalização
         run: echo "✅ Pipeline finalizada com sucesso e relatório publicado no GitHub Releases!"
+
 
 
 
